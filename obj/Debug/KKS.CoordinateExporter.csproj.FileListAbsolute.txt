@@ -1,0 +1,9 @@
+C:\Users\admin\Desktop\d\KKCsproj\Plug\KKS.CoordinateExporter\obj\Debug\KKS.CoordinateExporter.csproj.AssemblyReference.cache
+C:\Users\admin\Desktop\d\KKCsproj\Plug\KKS.CoordinateExporter\obj\Debug\KKS.CoordinateExporter.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\admin\Desktop\d\KKCsproj\Plug\KKS.CoordinateExporter\obj\Debug\KKS.CoordinateExporter.AssemblyInfoInputs.cache
+C:\Users\admin\Desktop\d\KKCsproj\Plug\KKS.CoordinateExporter\obj\Debug\KKS.CoordinateExporter.AssemblyInfo.cs
+C:\Users\admin\Desktop\d\KKCsproj\Plug\KKS.CoordinateExporter\obj\Debug\KKS.CoordinateExporter.csproj.CoreCompileInputs.cache
+C:\Users\admin\Desktop\d\KKCsproj\Plug\KKS.CoordinateExporter\bin\Debug\KKS.CoordinateExporter.dll
+C:\Users\admin\Desktop\d\KKCsproj\Plug\KKS.CoordinateExporter\bin\Debug\KKS.CoordinateExporter.pdb
+C:\Users\admin\Desktop\d\KKCsproj\Plug\KKS.CoordinateExporter\obj\Debug\KKS.CoordinateExporter.dll
+C:\Users\admin\Desktop\d\KKCsproj\Plug\KKS.CoordinateExporter\obj\Debug\KKS.CoordinateExporter.pdb
