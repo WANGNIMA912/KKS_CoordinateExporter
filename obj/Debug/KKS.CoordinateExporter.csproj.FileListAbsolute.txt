@@ -7,3 +7,4 @@ C:\Users\admin\Desktop\d\KKCsproj\Plug\KKS.CoordinateExporter\bin\Debug\KKS.Coor
 C:\Users\admin\Desktop\d\KKCsproj\Plug\KKS.CoordinateExporter\bin\Debug\KKS.CoordinateExporter.pdb
 C:\Users\admin\Desktop\d\KKCsproj\Plug\KKS.CoordinateExporter\obj\Debug\KKS.CoordinateExporter.dll
 C:\Users\admin\Desktop\d\KKCsproj\Plug\KKS.CoordinateExporter\obj\Debug\KKS.CoordinateExporter.pdb
+C:\Users\admin\Desktop\d\KKCsproj\Plug\KKS.CoordinateExporter\obj\Debug\KKS.CoordinateExporter.sourcelink.json

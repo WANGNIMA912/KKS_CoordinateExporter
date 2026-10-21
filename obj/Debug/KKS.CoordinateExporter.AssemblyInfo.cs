@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("KKS.CoordinateExporter")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+5174228c99f01eaa1683e279d39bd081e32e3ff6")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2d1aa0efc36b97e7b9f48d7835c967fab6fa8b00")]
 [assembly: System.Reflection.AssemblyProductAttribute("KKS.CoordinateExporter")]
 [assembly: System.Reflection.AssemblyTitleAttribute("KKS.CoordinateExporter")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
