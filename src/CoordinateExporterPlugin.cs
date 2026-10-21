@@ -18,14 +18,14 @@ namespace KKS.CoordinateExporter
     /// </summary>
     [BepInPlugin(PluginGuid, PluginName, PluginVersion)]
     [BepInProcess("CharaStudio.exe")]
-    [BepInDependency(KoikatuApiGuid, "1.48")]
+    [BepInDependency(KoikatuApiGuid, "1.20")]
     [BepInDependency(ExtendedSaveGuid)]
     [BepInDependency(ConfigurationManagerGuid, BepInDependency.DependencyFlags.SoftDependency)]
     public class CoordinateExporterPlugin : BaseUnityPlugin
     {
         public const string PluginGuid = "com.kkcsproj.kks.coordinateexporter";
         public const string PluginName = "KKS Coordinate Exporter";
-        public const string PluginVersion = "1.0.1";
+        public const string PluginVersion = "1.0.1a";
 
         private const string KoikatuApiGuid = "marco.kkapi";
         private const string ExtendedSaveGuid = "com.bepis.bepinex.extendedsave";
