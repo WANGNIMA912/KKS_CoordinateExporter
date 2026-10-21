@@ -25,7 +25,7 @@ namespace KKS.CoordinateExporter
     {
         public const string PluginGuid = "com.kkcsproj.kks.coordinateexporter";
         public const string PluginName = "KKS Coordinate Exporter";
-        public const string PluginVersion = "1.0.0";
+        public const string PluginVersion = "1.0.1";
 
         private const string KoikatuApiGuid = "marco.kkapi";
         private const string ExtendedSaveGuid = "com.bepis.bepinex.extendedsave";
