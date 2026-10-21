@@ -1,169 +1,146 @@
 # KKS Coordinate Exporter
 
-[中文](#中文) | [English](#english)
+> 开发与构建说明（含本机构建路径）。面向玩家的安装/使用说明见 [README.md](README.md)，那一份是 GitHub 首页展示的中英双语版本。
 
-在 CharaStudio 里按一个键，把选中角色当前的服装导出成标准服装卡。 / Export the selected character's current outfit as a standard coordinate card in CharaStudio with one keypress.
+在 **CharaStudio**（`CharaStudio.exe`）里按一个键，把**选中角色**当前的服装导出成
+**服装卡**（`.png`），包含：
 
----
+- Tops / Bottoms / Bra / Shorts / Gloves / Pantyhose / Socks / Indoor Shoes / Accessories
+- 妆容（如果该服装槽位启用了 makeup）
+- **KKSABMX** 的骨骼修正数据（扩展数据键 `KKABMPlugin.ABMData`）
+- **DBDE（Dynamic Bone Distribution Editor）** 的动态骨骼数据（扩展数据键 `org.njaecha.plugins.dbde`）
+- 其它注册了 `CharaCustomFunctionController` 的插件按同样的机制写进卡里的数据
 
-## 中文
+导出走游戏自己的 `ChaFileCoordinate.SaveFile`，所以文件格式与本体的服装卡完全一致，
+ExtensibleSaveFormat 会自动追加扩展数据块。
 
-**KKS Coordinate Exporter** 是一个 BepInEx 5 插件，为 **Koikatsu Sunshine（KKS）** 的 **CharaStudio**（`CharaStudio.exe`）提供一键服装卡导出：选中角色后按键，当前服装会被写成一个标准的 `.png` 服装卡，可直接在本编或工作室的服装载入界面读取。
+## 依赖
 
-### 功能
-
-- 导出当前服装槽位的全部部件：Tops / Bottoms / Bra / Shorts / Gloves / Pantyhose / Socks / Indoor Shoes / Accessories
-- 该槽位启用了妆容时，一并向导出的卡里写入 makeup
-- 保留已安装插件写进卡里的扩展数据：**KKSABMX** 的骨骼修正、**DBDE** 的动态骨骼，以及其它通过 `CharaCustomFunctionController` 注册的插件数据
-- 缩略图按你**当前视角的水平方向**实时拍摄（252×352 全身像），不是复用角色卡图片
-- 导出结果在屏幕**左上角**提示：成功为绿色色条，失败为红色色条，约 4.5 秒后淡出
-
-### 环境要求
-
-| 组件 | 版本 | 必需 |
+| 组件 | 版本 | 说明 |
 | --- | --- | --- |
-| Koikatsu Sunshine（KKS） | 含 CharaStudio | 是（不兼容 Koikatu） |
-| BepInEx | 5.4.x（仅 5.x，不支持 BepInEx 6） | 是 |
-| KKSAPI | 1.48 及以上 | 是 |
-| ExtensibleSaveFormat | 21.1.4 及以上 | 是 |
-| ConfigurationManager | 19.0 及以上 | 否，装了才能在游戏里按 F1 改键 |
-| KKSABMX / DBDE | 任意版本 | 否，装了且角色用过，导出时才会带上对应数据 |
+| BepInEx | 5.4.23.5 | 必须 5.x，不支持 BepInEx 6 |
+| KKSAPI | 1.48 | 硬依赖（`marco.kkapi`） |
+| KKS_ExtensibleSaveFormat | 21.1.4 | 硬依赖（`com.bepis.bepinex.extendedsave`） |
+| ConfigurationManager | 19.0 | 软依赖，装了才能在游戏里按 F1 改配置 |
+| KKSABMX / DBDE | 任意 | 可选；装了且角色用了，导出时才会带上对应数据 |
 
-### 安装
+## 安装
 
-1. 关闭游戏。
-2. 把 `KKS.CoordinateExporter.dll` 放到 `<游戏目录>/BepInEx/plugins/KKS_CoordinateExporter/`。
-3. 启动 `CharaStudio.exe`，BepInEx 控制台出现 `Loading [KKS Coordinate Exporter ...]` 即加载成功。
+把 `KKS.CoordinateExporter.dll` 放到：
 
-### 使用
+```
+<游戏目录>\BepInEx\plugins\KKS_CoordinateExporter\KKS.CoordinateExporter.dll
+```
 
-1. 在工作室里**选中**要导出的角色，按住 Ctrl 可多选。
-2. 按 **F8**（可在 ConfigurationManager 里改）。
-3. 左上角提示会显示结果，导出的卡保存到 `UserData/ExportedCoordinate/`。
-4. 文件名格式为 `<角色名>_<槽位>_<yyyyMMdd_HHmmss_fff>.png`，例如 `Kasumi_Plain_20261021_181530_012.png`；重名时自动追加 `_1`、`_2`。
+启动 `CharaStudio.exe`，BepInEx 控制台里应出现：
 
-槽位取自角色当前穿着的那一套：**Plain / Swim / Pajamas / Bathing**。
+```
+Loading [KKS Coordinate Exporter 1.0.0]
+[Info   :KKS Coordinate Exporter] KKS Coordinate Exporter 1.0.0 已加载。快捷键 F8，导出目录 ...\UserData\ExportedCoordinate。
+```
 
-### 配置
+## 使用
 
-配置文件：`BepInEx/config/com.kkcsproj.kks.coordinateexporter.cfg`
+1. 在工作室里**选中**要导出的角色（可多选，按住 Ctrl 点选）。
+2. 按 **F8**（可在 F1 配置里改）。
+3. 导出成功后屏幕**左上角**会出现一条提示（绿色色条），显示文件名，约 4.5 秒后淡出；
+   没有选中角色、目录不可写、导出失败时会出现红色提示。同一时间最多叠 4 条。
+4. 导出的卡在 `<游戏目录>\UserData\ExportedCoordinate\` 下，文件名形如：
+
+```
+<角色名>_<服装类型>_<yyyyMMdd_HHmmss_fff>.png
+```
+
+例如 `小春_Plain_20261021_181530_012.png`。重名会自动追加 `_1`、`_2`。
+
+服装类型取自角色的当前服装槽位（Plain / Swim / Pajamas / Bathing）。
+导出的卡可以在本编或工作室的服装载入界面直接读取。
+## 配置
+
+文件：`BepInEx\config\com.kkcsproj.kks.coordinateexporter.cfg`
 
 | 段 / 键 | 默认值 | 说明 |
 | --- | --- | --- |
-| `General / ExportHotkey` | `F8` | 导出快捷键，支持组合键 |
+| `General / ExportHotkey` | `F8` | 导出快捷键；支持组合键（ConfigurationManager 里点一下就能改） |
 | `General / ExportDirectory` | `UserData/ExportedCoordinate` | 导出目录；相对路径以游戏根目录为基准，也可填绝对路径 |
-| `General / VerboseLog` | `false` | 打开后日志会列出每张卡写入的扩展数据键与大致字节数 |
+| `General / VerboseLog` | `false` | 打开后日志里会列出每张卡写入的扩展数据键与大致字节数 |
 
-修改后即时生效（导出目录在每次导出时重新解析）。
+改完配置即时生效（目录在每次导出时重新解析）。
 
-### 工作原理（简述）
+## 工作原理（简述）
 
-1. 读取选中角色当前的服装槽位，做一份深拷贝，不修改角色身上的数据。
-2. 用临时相机按当前视角方向拍一张 252×352 的全身缩略图；拍不到时回退到角色卡自带的图。
-3. 触发 KKAPI 的服装保存链，让 KKSABMX / DBDE 等控制器把扩展数据写进这张卡。
-4. 调用游戏自带的 `ChaFileCoordinate.SaveFile` 写文件，ExtensibleSaveFormat 会自动追加扩展数据块，所以文件格式与本编导出的服装卡完全一致。
+1. `StudioAPI.GetSelectedCharacters()` 拿到选中角色。
+2. 按 `chaCtrl.fileStatus.coordinateType` 取当前服装槽位 `chaCtrl.chaFile.coordinate[type]`。
+3. 用 `new ChaFileCoordinate().LoadBytes(src.SaveBytes(), src.loadVersion)` 做深拷贝，
+   不修改角色身上的数据。
+4. 补上 `coordinateName`，并**现拍一张 252×352 的缩略图**：临时相机按当前视角的水平方向
+   后退到角色包围盒的 8 个角刚好贴住画面边界（较紧的一轴齐边），3 倍超采样后缩小
+   （`ThumbnailCapture`）。拍不到时（角色隐藏、渲染异常）回退到角色卡的 `pngData`，
+   再没有就留空。
+5. 触发 KKAPI 的 `CharacterApi.OnCoordinateBeingSaved` 链，让 ABMX / DBDE 等控制器把扩展数据
+   写到这张卡上（Studio 里 `MakerAPI.GetCharacterControl()` 返回 `null`，需要
+   `MakerApiExportScope` 的 Harmony 前缀补丁或反射兜底，详见 `docs/CODE-WALKTHROUGH.md`）。
+6. 调 `coordinate.SaveFile(path)`；ESF 的 transpiler 在方法末尾写入扩展数据块。
 
-### 注意事项
+## 构建
 
-- 只导出**当前服装槽位**，不会一次导出 Plain / Swim / Pajamas / Bathing 四套。
-- 缩略图是当前视角方向的全身像，不带官方构图背景；角色被隐藏或渲染失败时回退到角色卡图片。
-- 在工作室里切换过服装类型后，部分插件（如 KKSABMX）记录的槽位索引可能不随切换刷新，扩展数据可能对应另一个槽位；需要绝对精确时，先在本编切好目标服装再进工作室。
-- 日志里出现 `OnCoordinateBeingSaved fired outside chara maker` 属于兼容路径的提示，扩展数据仍会写入，可以忽略。
-- 导出目录的可写性由游戏进程权限决定，写到受保护目录会失败并在日志里报错。
+只依赖仓库根 `bin/`，**不需要游戏目录**：
 
-### 故障排查
+```bash
+dotnet build KKS.CoordinateExporter/KKS.CoordinateExporter.csproj
+```
+
+产物：`KKS.CoordinateExporter/bin/Debug/KKS.CoordinateExporter.dll`。
+
+部署到游戏（只有这一步需要 `GameDir`）：
+
+```bash
+# 把 <游戏目录> 换成你的 KKS 安装根目录（含 CharaStudio.exe 的那一层）
+dotnet build KKS.CoordinateExporter/KKS.CoordinateExporter.csproj ^
+  -p:GameDir="<游戏目录>" ^
+  -p:Deploy=true
+```
+
+默认部署到 `<GameDir>\BepInEx\plugins\KKS_CoordinateExporter\`；可用 `-p:DeployDir=...` 覆盖。
+
+如果 `bin/` 缺 DLL，`CheckRefs` 会直接报“找不到编译引用”并指向 `bin/MANIFEST.md`。
+
+## 产物自检
+
+```bash
+tools/verify/bin/Debug/net10.0/verify.exe ^
+  KKS.CoordinateExporter/bin/Debug/KKS.CoordinateExporter.dll
+```
+
+应看到 `TargetFramework: .NETFramework,Version=v4.6`、`BepInProcess("CharaStudio.exe")`，
+且所有引用都能解析（游戏程序集 `PublicKeyToken=!! NULL !!` 是正常的）。
+## 已知限制
+
+- **只导出当前服装槽位**，不会一次导出 Plain/Swim/Pajamas/Bathing 四套。
+- 缩略图是**当前视角方向**的全身像，不是本编那种带背景/姿势的官方构图；角色被隐藏或渲染失败时
+  回退到角色卡 PNG，角色卡也没有图时导出卡没有预览图。
+- 左上角提示是纯 IMGUI，中文字体取自系统（微软雅黑/黑体等）；系统缺中文字体时自动改显示英文。
+- `CharaCustomFunctionController.CurrentCoordinate` 只在控制器 `Awake` 时按当时的服装类型初始化，
+  在工作室里切换服装类型后不会刷新；如果先切过服装再导出，ABMX 数据可能记录了**另一个槽位**的修正。
+  需要绝对准确时，先在角色卡里切到目标服装再进工作室。
+- 若 Harmony 补丁没生效（Mono 把目标方法内联了），日志里会出现 KKAPI 的
+  `OnCoordinateBeingSaved fired outside chara maker for ...`；这是预期兜底路径，
+  扩展数据仍会写入，可以忽略。`VerboseLog` 下能看到实际写入的键。
+- 导出目录可写性由游戏进程权限决定；写到系统保护目录会失败并在日志里报错。
+
+## 故障排查
 
 | 现象 | 处理 |
 | --- | --- |
-| 按 F8 没反应 | 确认控制台有加载日志；确认当前在工作室且已选中角色 |
-| 提示“没有选中任何角色” | 用鼠标点选角色，出现选中框后再按 F8 |
-| 卡里没有 ABMX / DBDE 数据 | 确认对应插件已加载、角色确实用过；打开 `VerboseLog` 看写入的扩展键 |
-| 游戏里改不了快捷键 | 安装 ConfigurationManager，按 F1 修改 |
+| 按 F8 没反应 | 确认 BepInEx 控制台有加载日志；确认当前在工作室且已选中角色 |
+| 日志提示“没有选中任何角色” | 用鼠标点选角色（出现选中框），再按 F8 |
+| 日志提示“卡片里没有扩展数据” | ABMX / DBDE 未安装，或角色没用它们，或控制器未加载 |
+| 卡里没有 ABMX 数据 | 检查 KKSABMX 是否加载；看 `VerboseLog` 日志里的扩展键 |
+| 游戏里改不了快捷键 | 装 ConfigurationManager（19.0），按 F1 |
 
-### 基本信息
+## 相关文档
 
-- 插件 GUID：`com.kkcsproj.kks.coordinateexporter`
-- 版本：1.0.0
-- 目标进程：`CharaStudio.exe`（BepInEx 5 / Mono / .NET Framework 4.6）
-
----
-
-## English
-
-**KKS Coordinate Exporter** is a BepInEx 5 plugin for **Koikatsu Sunshine (KKS)** that adds one-key outfit export to **CharaStudio** (`CharaStudio.exe`). Select a character, press the hotkey, and the current outfit is written as a standard `.png` coordinate card that can be loaded directly in the main game or in Studio.
-
-### Features
-
-- Exports every part of the current outfit slot: Tops / Bottoms / Bra / Shorts / Gloves / Pantyhose / Socks / Indoor Shoes / Accessories
-- Includes makeup when the slot has makeup enabled
-- Preserves extended data written by other plugins: **KKSABMX** bone edits, **DBDE** dynamic bones, and any other plugin registered through `CharaCustomFunctionController`
-- The thumbnail is rendered live at 252×352 from your **current view direction**, instead of reusing the character card image
-- Results appear as a **top-left on-screen toast**: green for success, red for failure, fading out after about 4.5 seconds
-
-### Requirements
-
-| Component | Version | Required |
-| --- | --- | --- |
-| Koikatsu Sunshine (KKS) | with CharaStudio | Yes (not compatible with Koikatu) |
-| BepInEx | 5.4.x (5.x only; BepInEx 6 is not supported) | Yes |
-| KKSAPI | 1.48 or newer | Yes |
-| ExtensibleSaveFormat | 21.1.4 or newer | Yes |
-| ConfigurationManager | 19.0 or newer | No, needed for in-game hotkey rebinding (F1) |
-| KKSABMX / DBDE | any | No, data is only exported if installed and used by the character |
-
-### Installation
-
-1. Close the game.
-2. Copy `KKS.CoordinateExporter.dll` to `<GameDir>/BepInEx/plugins/KKS_CoordinateExporter/`.
-3. Launch `CharaStudio.exe`; `Loading [KKS Coordinate Exporter ...]` in the BepInEx console means it loaded.
-
-### Usage
-
-1. **Select** one or more characters in Studio (hold Ctrl to multi-select).
-2. Press **F8** (configurable).
-3. The toast reports the result, and the card is saved to `UserData/ExportedCoordinate/`.
-4. File names look like `<chara name>_<slot>_<yyyyMMdd_HHmmss_fff>.png`, for example `Kasumi_Plain_20261021_181530_012.png`. Duplicate names get a `_1`, `_2` suffix.
-
-The slot is whatever the character is currently wearing: **Plain / Swim / Pajamas / Bathing**.
-
-### Configuration
-
-Config file: `BepInEx/config/com.kkcsproj.kks.coordinateexporter.cfg`
-
-| Section / Key | Default | Description |
-| --- | --- | --- |
-| `General / ExportHotkey` | `F8` | Export hotkey; key combinations are supported |
-| `General / ExportDirectory` | `UserData/ExportedCoordinate` | Output folder; relative paths are resolved against the game root, absolute paths also work |
-| `General / VerboseLog` | `false` | When enabled, the log lists the extended-data keys and approximate sizes written to each card |
-
-Changes take effect immediately (the output folder is resolved on every export).
-
-### How it works
-
-1. Reads the selected character's current outfit slot and makes a deep copy, leaving the character itself untouched.
-2. Renders a 252×352 full-body thumbnail from the current view direction with a temporary camera; falls back to the character card image if rendering fails.
-3. Triggers the KKAPI coordinate-save chain so KKSABMX, DBDE and other controllers write their extended data into the copied card.
-4. Calls the game's own `ChaFileCoordinate.SaveFile`; ExtensibleSaveFormat appends the extended-data block, so the file is byte-for-byte the same format as a vanilla coordinate card.
-
-### Notes and limitations
-
-- Only the **current outfit slot** is exported; Plain / Swim / Pajamas / Bathing are not exported in one go.
-- The thumbnail is a full-body shot from your current view without the official background composition; it falls back to the character card image when the character is hidden or rendering fails.
-- After switching outfit types in Studio, some plugins (such as KKSABMX) may keep a stale slot index, so their extended data can belong to another slot. For exact results, switch to the target outfit in the main game before entering Studio.
-- `OnCoordinateBeingSaved fired outside chara maker` in the log comes from the compatibility fallback; extended data is still written and the message can be ignored.
-- Whether the output folder is writable depends on the game process permissions; writing to a protected folder fails and is logged.
-
-### Troubleshooting
-
-| Symptom | Fix |
-| --- | --- |
-| F8 does nothing | Check the console for the load message; make sure you are in Studio with a character selected |
-| Toast says no character is selected | Click a character until the selection frame appears, then press F8 |
-| No ABMX / DBDE data in the card | Make sure those plugins are loaded and were used by the character; enable `VerboseLog` to see the written keys |
-| Cannot change the hotkey in game | Install ConfigurationManager and press F1 |
-
-### Details
-
-- Plugin GUID: `com.kkcsproj.kks.coordinateexporter`
-- Version: 1.0.0
-- Target: `CharaStudio.exe` (BepInEx 5 / Mono / .NET Framework 4.6)
+- 面向玩家的中英双语说明：`README.md`（GitHub 首页展示）
+- 源码逐段讲解：`docs/CODE-WALKTHROUGH.md`
+- 构建/引用/工作区约定：仓库根 `AGENTS.md`
+- 编译引用来源与校验和：`bin/MANIFEST.md`
