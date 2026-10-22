@@ -6,7 +6,11 @@
     <RootNamespace>KKS.CoordinateExporter</RootNamespace>
     <LangVersion>latest</LangVersion>
     <Deterministic>true</Deterministic>
-    <Version>1.0.0</Version>
+    <Version>1.0.2</Version>
+
+    <!-- 版本号唯一来源：<Version>。编译时生成 partial class 里的 PluginVersion 常量。 -->
+    <PluginVersionFile>$(MSBuildProjectDirectory)\obj\$(Configuration)\$(TargetFramework)\PluginVersion.g.cs</PluginVersionFile>
+
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
   </PropertyGroup>
@@ -14,7 +18,7 @@
   <PropertyGroup>
     <!-- 编译引用目录：仓库根 bin/（.gitignore 已忽略，来源见 bin/MANIFEST.md） -->
     
-    <!-- 哈哈，正常情况哪怕你已经指向了游戏目录，也是编译不了的，沃壤依赖只想到了一个外部的单独文件夹 -->
+    <!-- 引用固定在仓库根 bin/；不要改成游戏目录。 -->
     
     <RefDir Condition="'$(RefDir)' == ''">$(MSBuildThisFileDirectory)..\bin</RefDir>
 
@@ -37,21 +41,47 @@
     <Reference Include="UnityEngine.ImageConversionModule"><HintPath>$(RefDir)\UnityEngine.ImageConversionModule.dll</HintPath><Private>false</Private></Reference>
   </ItemGroup>
   
+  <ItemGroup>
+    <Compile Include="$(PluginVersionFile)" />
+  </ItemGroup>
+
+  <!-- 从 csproj 的 <Version> 生成 PluginVersion，避免源码与工程文件版本漂移。 -->
+  <Target Name="GeneratePluginVersion" BeforeTargets="CoreCompile">
+    <MakeDir Directories="$(MSBuildProjectDirectory)\obj\$(Configuration)\$(TargetFramework)" />
+    <ItemGroup>
+      <_PluginVersionLine Include="namespace KKS.CoordinateExporter" />
+      <_PluginVersionLine Include="{" />
+      <_PluginVersionLine Include="    public partial class CoordinateExporterPlugin" />
+      <_PluginVersionLine Include="    {" />
+      <_PluginVersionLine Include="        public const string PluginVersion = &quot;$(Version)&quot;%3B" />
+      <_PluginVersionLine Include="    }" />
+      <_PluginVersionLine Include="}" />
+    </ItemGroup>
+    <WriteLinesToFile
+      File="$(PluginVersionFile)"
+      Lines="@(_PluginVersionLine)"
+      Overwrite="true"
+      WriteOnlyWhenDifferent="true" />
+    <ItemGroup>
+      <FileWrites Include="$(PluginVersionFile)" />
+    </ItemGroup>
+  </Target>
+
   <Target Name="CheckRefs" BeforeTargets="BeforeBuild">
     <Error Condition="!Exists('$(RefDir)\BepInEx.dll')"
-           Text="Unable to resolve dependencies：$(RefDir)\BepInEx.dll&#10;Please copy dependencies to ../bin/ ." />
+           Text="缺少编译引用：$(RefDir)\BepInEx.dll&#10;请把依赖复制到仓库根 bin/（清单见 bin/MANIFEST.md）。" />
     <Error Condition="!Exists('$(RefDir)\KKSAPI.dll')"
-           Text="Unable to resolve dependencies：$(RefDir)\KKSAPI.dll&#10;Please copy dependencies to ../bin/ ." />
+           Text="缺少编译引用：$(RefDir)\KKSAPI.dll&#10;请把依赖复制到仓库根 bin/（清单见 bin/MANIFEST.md）。" />
     <Error Condition="!Exists('$(RefDir)\KKS_ExtensibleSaveFormat.dll')"
-           Text="Unable to resolve dependencies：$(RefDir)\KKS_ExtensibleSaveFormat.dll&#10;Please copy BepInEx\plugins\KKS_BepisPlugins\KKS_ExtensibleSaveFormat.dll to ../bin/ ." />
+           Text="缺少编译引用：$(RefDir)\KKS_ExtensibleSaveFormat.dll&#10;请把 BepInEx\plugins\KKS_BepisPlugins\KKS_ExtensibleSaveFormat.dll 复制到仓库根 bin/。" />
     <Error Condition="!Exists('$(RefDir)\0Harmony.dll')"
-           Text="Unable to resolve dependencies：$(RefDir)\0Harmony.dll&#10;Please copy BepInEx\core\0Harmony.dll to ../bin/ ." />
+           Text="缺少编译引用：$(RefDir)\0Harmony.dll&#10;请把 BepInEx\core\0Harmony.dll 复制到仓库根 bin/。" />
     <Error Condition="!Exists('$(RefDir)\Assembly-CSharp.dll')"
-           Text="Unable to resolve dependencies：$(RefDir)\Assembly-CSharp.dll&#10;Please copy dependencies to ../bin/ ." />
+           Text="缺少编译引用：$(RefDir)\Assembly-CSharp.dll&#10;请把依赖复制到仓库根 bin/（清单见 bin/MANIFEST.md）。" />
     <Error Condition="!Exists('$(RefDir)\UnityEngine.IMGUIModule.dll') Or !Exists('$(RefDir)\UnityEngine.TextRenderingModule.dll')"
-           Text="Unable to resolve IMGUI：$(RefDir)\UnityEngine.IMGUIModule.dll 或 UnityEngine.TextRenderingModule.dll&#10;Please copy dependencies to ../bin/ ." />
+           Text="缺少 IMGUI 依赖：$(RefDir)\UnityEngine.IMGUIModule.dll 或 UnityEngine.TextRenderingModule.dll&#10;请把依赖复制到仓库根 bin/（清单见 bin/MANIFEST.md）。" />
     <Error Condition="!Exists('$(RefDir)\UnityEngine.ImageConversionModule.dll')"
-           Text="Unable to resolve dependencies：$(RefDir)\UnityEngine.ImageConversionModule.dll&#10;Please copy root\CharaStudio_Data\Managed to ../bin/ ." />
+           Text="缺少编译引用：$(RefDir)\UnityEngine.ImageConversionModule.dll&#10;请把 KoikatsuSunshine_Data\Managed 下的依赖复制到仓库根 bin/。" />
   </Target>
 
   <!-- dotnet build ... -p:Deploy=true -p:GameDir="..." -->

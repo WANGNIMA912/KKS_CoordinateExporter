@@ -1,0 +1,9 @@
+# 编译输出
+bin/
+obj/
+*.user
+.vs/
+.idea/
+
+# 本地临时文件
+tmp/

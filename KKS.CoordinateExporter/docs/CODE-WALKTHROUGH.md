@@ -1,6 +1,6 @@
 # KKS Coordinate Exporter 源码讲解
 
-> 对应版本 1.0.0。改代码前先读完第 1 节（设计取舍），再看要改的文件。
+> 对应版本 1.0.2。改代码前先读完第 1 节（设计取舍），再看要改的文件。
 
 ## 1. 设计取舍：为什么不自己序列化
 
@@ -77,7 +77,7 @@ bool patchActive = makerApiPatchApplied && IsMakerApiPatchActive(chaCtrl);
 
 ### 4.1 CoordinateExporterPlugin.cs
 
-- 特性：`BepInPlugin(com.kkcsproj.kks.coordinateexporter, KKS Coordinate Exporter, 1.0.0)`、
+- 特性：`BepInPlugin(com.kkcsproj.kks.coordinateexporter, KKS Coordinate Exporter, 1.0.2)`（版本来自 csproj 的 `<Version>`，由生成的 `PluginVersion` 常量提供）、
   `BepInProcess("CharaStudio.exe")`、KKSAPI 1.48 与 ESF 硬依赖、ConfigurationManager 软依赖。
   少了 `BepInProcess` 或写错成 `KoikatsuSunshine.exe`，工作室就不会加载。
 - 配置：`General/ExportHotkey`（`KeyboardShortcut`，默认 F8）、`ExportDirectory`、`VerboseLog`。
@@ -172,18 +172,19 @@ byte[] png = ThumbnailCapture.Capture(chaCtrl, chaFile);  // 252x352，失败回
   每项画一个半透明黑底 `GUI.Box`，左侧 3px 色条区分成功/失败，然后 `GUI.Label` 文字。
 - 中文字体：`Font.GetOSInstalledFontNames()` 里找微软雅黑/黑体/宋体/Noto Sans CJK 等，
   用 `Font.CreateDynamicFontFromOSFont` 建动态字体；一个都没有时改为显示英文，
-  避免显示一屏方块。做法与 `KKS.TestWindow/src/TestWindowUI.cs` 的 `TryCreateCjkFont` 一致。
+  避免显示一屏方块。
 - 绘制异常只记一次日志（`_lastError` 去重），避免 `OnGUI` 每帧刷屏。
 
 ## 5. csproj 要点
 
 - `TargetFramework=net46`；引用全部来自仓库根 `bin/`，`<Private>false</Private>`（不复制到输出）。
+- `<Version>` 是版本号的唯一来源；`GeneratePluginVersion` 在编译前生成 `obj/.../PluginVersion.g.cs` 里的 `partial class` 常量，源码不写死版本号。
 - `CheckRefs` 在 `BeforeBuild` 检查关键 DLL（BepInEx / KKSAPI / ESF / 0Harmony /
   Assembly-CSharp，以及 IMGUI、TextRendering、ImageConversion 三个 Unity 模块），
   缺了直接给人话错误，避免一屏 `CS0246`。
 - `DeployToGame`：`Deploy=true` 时把 `$(TargetPath)` 复制到 `$(DeployDir)`，默认
   `<GameDir>\BepInEx\plugins\KKS_CoordinateExporter`。
-- 新增引用时记得同步 `bin/MANIFEST.md` 与 `AGENTS.md` 第 5 节。
+- 新增引用时记得同步 `bin/MANIFEST.md` 与 `AGENTS.md`。
 
 ## 6. 常见坑
 
@@ -203,7 +204,7 @@ byte[] png = ThumbnailCapture.Capture(chaCtrl, chaFile);  // 252x352，失败回
 ## 7. 修改后怎么验证
 
 1. `dotnet build KKS.CoordinateExporter/KKS.CoordinateExporter.csproj`：0 警告 0 错误。
-2. `tools/verify/.../verify.exe` 检查 TFM、`BepInProcess`、依赖 GUID、引用解析。
+2. 如果本地保留了预编译的 `tools/verify/.../verify.exe`，用它检查 TFM、`BepInProcess`、依赖 GUID、引用解析；源码目前不在工作区。
 3. 关游戏 → `-p:Deploy=true` 部署 → 开游戏，看 `BepInEx\LogOutput.log` 有加载日志。
 4. 工作室选中角色按 F8：日志出现“已导出 …（N 字节，用时 … ms）”，
    `UserData/ExportedCoordinate` 下出现新卡，屏幕左上角出现绿色提示并在约 4.5 秒后淡出。
