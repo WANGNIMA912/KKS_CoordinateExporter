@@ -1,6 +1,6 @@
 # KKS Coordinate Exporter
 
-[中文](#中文) | [English](#english)
+[English](#english) | [中文](#中文)
 
 ## English
 
