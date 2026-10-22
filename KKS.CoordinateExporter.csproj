@@ -1,26 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
-  <!--
-    KKS Coordinate Exporter —— Koikatsu Sunshine（CharaStudio.exe）服装卡导出插件
-
-    * 在工作室里选中一个或多个角色，按快捷键（默认 F8）把当前服装导出成
-      「服装卡」到 UserData/ExportedCoordinate（.png + 扩展数据块）
-    * 服装卡包含：Tops / Bottoms / Bra / Shorts / Gloves / Pantyhose / Socks /
-      Indoor Shoes / Accessories，以及 KKSABMX 与 DBDE（动态骨骼）的扩展数据
-    * 快捷键与导出目录都是 BepInEx 配置项，装了 ConfigurationManager（默认 F1）
-      就能在游戏里直接改
-    * Unity 2019.4.9f1 / Mono / .NET Framework 4.6  ->  net46
-
-    编译（不需要游戏目录：引用已复制到仓库根 bin/）：
-      dotnet build KKS.CoordinateExporter/KKS.CoordinateExporter.csproj
-
-    部署到游戏（只有这一步需要 GameDir）：
-      dotnet build KKS.CoordinateExporter/KKS.CoordinateExporter.csproj ^
-        -p:GameDir="E:\kk\...\BetterRepack R12" -p:Deploy=true
-
-    引用清单与来源：bin/MANIFEST.md
-  -->
-
+  
   <PropertyGroup>
     <TargetFramework>net46</TargetFramework>
     <AssemblyName>KKS.CoordinateExporter</AssemblyName>
@@ -34,6 +13,9 @@
 
   <PropertyGroup>
     <!-- 编译引用目录：仓库根 bin/（.gitignore 已忽略，来源见 bin/MANIFEST.md） -->
+    
+    <!-- 哈哈，正常情况哪怕你已经指向了游戏目录，也是编译不了的，沃壤依赖只想到了一个外部的单独文件夹 -->
+    
     <RefDir Condition="'$(RefDir)' == ''">$(MSBuildThisFileDirectory)..\bin</RefDir>
 
     <!-- 只有 Deploy=true 时才用到 GameDir -->
@@ -54,30 +36,29 @@
     <Reference Include="UnityEngine.TextRenderingModule"><HintPath>$(RefDir)\UnityEngine.TextRenderingModule.dll</HintPath><Private>false</Private></Reference>
     <Reference Include="UnityEngine.ImageConversionModule"><HintPath>$(RefDir)\UnityEngine.ImageConversionModule.dll</HintPath><Private>false</Private></Reference>
   </ItemGroup>
-
-  <!-- 引用目录不完整时给人话，而不是一屏 CS0246 -->
+  
   <Target Name="CheckRefs" BeforeTargets="BeforeBuild">
     <Error Condition="!Exists('$(RefDir)\BepInEx.dll')"
-           Text="找不到编译引用：$(RefDir)\BepInEx.dll&#10;请把游戏目录的依赖复制到 bin/（清单见 bin/MANIFEST.md）。" />
+           Text="Unable to resolve dependencies：$(RefDir)\BepInEx.dll&#10;Please copy dependencies to ../bin/ ." />
     <Error Condition="!Exists('$(RefDir)\KKSAPI.dll')"
-           Text="找不到编译引用：$(RefDir)\KKSAPI.dll&#10;请把游戏目录的依赖复制到 bin/（清单见 bin/MANIFEST.md）。" />
+           Text="Unable to resolve dependencies：$(RefDir)\KKSAPI.dll&#10;Please copy dependencies to ../bin/ ." />
     <Error Condition="!Exists('$(RefDir)\KKS_ExtensibleSaveFormat.dll')"
-           Text="找不到编译引用：$(RefDir)\KKS_ExtensibleSaveFormat.dll&#10;请把 BepInEx\plugins\KKS_BepisPlugins\KKS_ExtensibleSaveFormat.dll 复制到 bin/（清单见 bin/MANIFEST.md）。" />
+           Text="Unable to resolve dependencies：$(RefDir)\KKS_ExtensibleSaveFormat.dll&#10;Please copy BepInEx\plugins\KKS_BepisPlugins\KKS_ExtensibleSaveFormat.dll to ../bin/ ." />
     <Error Condition="!Exists('$(RefDir)\0Harmony.dll')"
-           Text="找不到编译引用：$(RefDir)\0Harmony.dll&#10;请把 BepInEx\core\0Harmony.dll 复制到 bin/（清单见 bin/MANIFEST.md）。" />
+           Text="Unable to resolve dependencies：$(RefDir)\0Harmony.dll&#10;Please copy BepInEx\core\0Harmony.dll to ../bin/ ." />
     <Error Condition="!Exists('$(RefDir)\Assembly-CSharp.dll')"
-           Text="找不到编译引用：$(RefDir)\Assembly-CSharp.dll&#10;请把游戏目录的依赖复制到 bin/（清单见 bin/MANIFEST.md）。" />
+           Text="Unable to resolve dependencies：$(RefDir)\Assembly-CSharp.dll&#10;Please copy dependencies to ../bin/ ." />
     <Error Condition="!Exists('$(RefDir)\UnityEngine.IMGUIModule.dll') Or !Exists('$(RefDir)\UnityEngine.TextRenderingModule.dll')"
-           Text="找不到 IMGUI 编译引用：$(RefDir)\UnityEngine.IMGUIModule.dll 或 UnityEngine.TextRenderingModule.dll&#10;请把游戏目录的依赖复制到 bin/（清单见 bin/MANIFEST.md）。" />
+           Text="Unable to resolve IMGUI：$(RefDir)\UnityEngine.IMGUIModule.dll 或 UnityEngine.TextRenderingModule.dll&#10;Please copy dependencies to ../bin/ ." />
     <Error Condition="!Exists('$(RefDir)\UnityEngine.ImageConversionModule.dll')"
-           Text="找不到编译引用：$(RefDir)\UnityEngine.ImageConversionModule.dll&#10;请把游戏目录 CharaStudio_Data\Managed 下的同名文件复制到 bin/（清单见 bin/MANIFEST.md）。" />
+           Text="Unable to resolve dependencies：$(RefDir)\UnityEngine.ImageConversionModule.dll&#10;Please copy root\CharaStudio_Data\Managed to ../bin/ ." />
   </Target>
 
   <!-- dotnet build ... -p:Deploy=true -p:GameDir="..." -->
   <Target Name="DeployToGame" AfterTargets="Build" Condition="'$(Deploy)' == 'true'">
     <MakeDir Directories="$(DeployDir)" />
     <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(DeployDir)" />
-    <Message Importance="high" Text="已部署 $(TargetFileName) -> $(DeployDir)" />
+    <Message Importance="high" Text="Deployed $(TargetFileName) -> $(DeployDir)" />
   </Target>
 
 </Project>
