@@ -6,7 +6,7 @@
     <RootNamespace>KKS.CoordinateExporter</RootNamespace>
     <LangVersion>latest</LangVersion>
     <Deterministic>true</Deterministic>
-    <Version>1.0.2</Version>
+    <Version>1.0.3</Version>
 
     <!-- 版本号唯一来源：<Version>。编译时生成 partial class 里的 PluginVersion 常量。 -->
     <PluginVersionFile>$(MSBuildProjectDirectory)\obj\$(Configuration)\$(TargetFramework)\PluginVersion.g.cs</PluginVersionFile>

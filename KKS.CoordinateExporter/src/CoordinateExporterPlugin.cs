@@ -23,7 +23,7 @@ namespace KKS.CoordinateExporter
     [BepInDependency(ConfigurationManagerGuid, BepInDependency.DependencyFlags.SoftDependency)]
     public partial class CoordinateExporterPlugin : BaseUnityPlugin
     {
-        public const string PluginGuid = "com.kkcsproj.kks.coordinateexporter";
+        public const string PluginGuid = "com.wangnima912.kks.coordinateexporter";
         public const string PluginName = "KKS Coordinate Exporter";
 
         // PluginVersion 由 csproj 的 <Version> 在编译时生成（obj/.../PluginVersion.g.cs）。
