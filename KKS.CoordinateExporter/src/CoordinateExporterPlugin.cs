@@ -18,7 +18,7 @@ namespace KKS.CoordinateExporter
     /// </summary>
     [BepInPlugin(PluginGuid, PluginName, PluginVersion)]
     [BepInProcess("CharaStudio.exe")]
-    [BepInDependency(KoikatuApiGuid, "1.20")]
+    [BepInDependency(KoikatuApiGuid, "1.40")]
     [BepInDependency(ExtendedSaveGuid)]
     [BepInDependency(ConfigurationManagerGuid, BepInDependency.DependencyFlags.SoftDependency)]
     public partial class CoordinateExporterPlugin : BaseUnityPlugin
